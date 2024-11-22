@@ -145,3 +145,56 @@ INSERT INTO Ghost_FavoriteLocation_Location VALUES (2, 2);
 INSERT INTO Ghost_FavoriteLocation_Location VALUES (3, 3);
 INSERT INTO Ghost_FavoriteLocation_Location VALUES (4, 4);
 INSERT INTO Ghost_FavoriteLocation_Location VALUES (5, 5);
+
+# Sample Queries
+## spookiest or quickest ghosts recorded by each hunter.
+SELECT Hunter.name AS hunter_name, Ghost.name AS ghost_name, 
+       Ghost.spookiness_level, Ghost.speed
+FROM Hunter
+JOIN Hunter_Records_Evidence ON Hunter.hunterID = Hunter_Records_Evidence.hunterID
+JOIN Evidence ON Hunter_Records_Evidence.evidenceID = Evidence.evidenceID
+JOIN Equipment_Detects_Ghost ON Evidence.equipmentID = Equipment_Detects_Ghost.equipmentID
+JOIN Ghost ON Equipment_Detects_Ghost.ghostID = Ghost.ghostID
+ORDER BY Ghost.spookiness_level DESC, Ghost.speed DESC;
+
+## List all ghost sightings that used specific equipment.
+SELECT Hunter.name AS hunter_name, Ghost.name AS ghost_name, Equipment.type AS equipment_type, 
+       Evidence.date, Evidence.time
+FROM Hunter
+JOIN Hunter_Records_Evidence ON Hunter.hunterID = Hunter_Records_Evidence.hunterID
+JOIN Evidence ON Hunter_Records_Evidence.evidenceID = Evidence.evidenceID
+JOIN Equipment ON Evidence.equipmentID = Equipment.equipmentID
+JOIN Equipment_Detects_Ghost ON Equipment.equipmentID = Equipment_Detects_Ghost.equipmentID
+JOIN Ghost ON Equipment_Detects_Ghost.ghostID = Ghost.ghostID
+WHERE Equipment.type = 'Camera';
+
+## Find the top-rated hunters based on the spookiness of the ghosts they’ve sighted.
+SELECT Hunter.name AS hunter_name, 
+       AVG(Ghost.spookiness_level) AS avg_spookiness
+FROM Hunter
+JOIN Hunter_Records_Evidence ON Hunter.hunterID = Hunter_Records_Evidence.hunterID
+JOIN Evidence ON Hunter_Records_Evidence.evidenceID = Evidence.evidenceID
+JOIN Equipment_Detects_Ghost ON Evidence.equipmentID = Equipment_Detects_Ghost.equipmentID
+JOIN Ghost ON Equipment_Detects_Ghost.ghostID = Ghost.ghostID
+GROUP BY Hunter.name
+ORDER BY avg_spookiness DESC;
+
+## Find all sightings in abandoned locations.
+SELECT Hunter.name AS hunter_name, Ghost.name AS ghost_name, Location.building, Location.room
+FROM Hunter
+JOIN Hunter_Records_Evidence ON Hunter.hunterID = Hunter_Records_Evidence.hunterID
+JOIN Evidence ON Hunter_Records_Evidence.evidenceID = Evidence.evidenceID
+JOIN Location ON Evidence.locationID = Location.locationID
+JOIN Equipment_Detects_Ghost ON Evidence.equipmentID = Equipment_Detects_Ghost.equipmentID
+JOIN Ghost ON Equipment_Detects_Ghost.ghostID = Ghost.ghostID
+WHERE Location.vacancy = 'Abandoned';
+
+## Retrieve the locations most frequented by specific ghosts.
+SELECT Ghost.name AS ghost_name, Location.building, Location.room
+FROM Ghost
+JOIN Ghost_FavoriteLocation_Location ON Ghost.ghostID = Ghost_FavoriteLocation_Location.ghostID
+JOIN Location ON Ghost_FavoriteLocation_Location.locationID = Location.locationID;
+
+
+
+
