@@ -1,200 +1,80 @@
-﻿# GhostHuntersInc 
+﻿# Ghost Hunter Database
 
-# tables
+## Project Overview
+This project involves creating a **Ghost Hunter Database** that enables ghost hunters to log sightings, capture evidence, and track equipment used during investigations. The database stores essential information about ghosts, hunters, sightings, equipment, and locations. It also tracks relationships between various entities such as ghosts, hunters, and the equipment used.
 
-# Ghost table
-# CREATE TABLE Ghost (
-    ghostID INT PRIMARY KEY,
-    name VARCHAR(50),
-    haunting_type VARCHAR(50),
-    spookiness_level INT,
-    speed INT
-);
+### Client Requirements:
+- Ghost hunters can log their ghost sightings and capture evidence.
+- Each sighting includes associated details such as location, type of haunting, and spookiness level.
+- Ghosts have attributes such as speed, favorite location, and spookiness level.
+- Equipment used during sightings is tracked (e.g., EMF reader, camera).
+- GhostType can be determined by evidence linked to different equipment.
+  
+### Entity Sets & Relationships:
 
-# Hunter table
-# CREATE TABLE Hunter (
-    hunterID INT PRIMARY KEY,
-    name VARCHAR(50),
-    experience_level VARCHAR(50),
-    specialty_type VARCHAR(50),
-    speed INT
-);
+#### Entities:
+1. **Ghost**: Contains attributes like ghost ID, name, haunting type, spookiness level, and speed.
+2. **Hunter**: Contains hunter ID, name, experience level, and speed.
+3. **Evidence**: Contains evidence ID, location ID, equipment ID, date, and time.
+4. **Equipment**: Contains equipment ID, type, model, and working status (whether the equipment is functional).
+5. **Location**: Contains location ID, building, room, vacancy status, and construction date.
+6. **GhostType**: Contains the ghost type (g_type).
 
-# Evidence table
-# CREATE TABLE Evidence (
-    evidenceID INT PRIMARY KEY,
-    locationID INT,
-    equipmentID INT,
-    date DATE,
-    time TIME
-);
+#### Relationships:
+- **Ghost_is_GhostType**: Relates ghosts to their specific types.
+- **Equipment_Detects_GhostType**: Links equipment to the ghost types they can detect.
+- **Hunter_Has_Equipment**: Tracks which equipment a hunter possesses.
+- **Ghost_FavoriteLocation_Location**: Tracks a ghost's favorite location.
+- **Evidence_FoundBy_Hunter**: Links evidence to the hunter who found it.
+- **Evidence_FoundWith_Equipment**: Links evidence to the equipment used during the sighting.
+- **Evidence_FoundIn_Location**: Tracks where the evidence was found.
 
-# Equipment table
-# CREATE TABLE Equipment (
-    equipmentID INT PRIMARY KEY,
-    type VARCHAR(50),
-    model VARCHAR(50),
-    detection_type VARCHAR(50),
-    working BOOLEAN
-);
+### Attributes:
+- **Ghost**: ghost ID, name, haunting type, spookiness level, speed.
+- **Hunter**: hunter ID, name, experience level, speed.
+- **Evidence**: evidence ID, location ID, equipment ID, date, time.
+- **Equipment**: equipment ID, type, model, working (boolean).
+- **Location**: location ID, building, room, vacancy (abandoned or not), construction date.
+- **GhostType**: g_type (type of ghost).
 
-# Location table
-# CREATE TABLE Location (
-    locationID INT PRIMARY KEY,
-    building VARCHAR(100),
-    room VARCHAR(50),
-    vacancy VARCHAR(50),
-    construction_date DATE
-);
+### Sample Queries:
+- Retrieve the spookiest/quickest ghosts recorded by each hunter.
+- Find ghost sightings with specific equipment (e.g., camera).
+- List top-rated hunters based on the spookiness of ghosts they’ve sighted.
+- Find the ghost type based on all the evidence in a given location.
+- /*insert final query here*/
+---
 
-# Hunter_Records_Evidence relationship table
-# CREATE TABLE Hunter_Records_Evidence (
-    hunterID INT,
-    evidenceID INT,
-    PRIMARY KEY (hunterID, evidenceID),
-    FOREIGN KEY (hunterID) REFERENCES Hunter(hunterID),
-    FOREIGN KEY (evidenceID) REFERENCES Evidence(evidenceID)
-);
+## Project Files
 
-# Equipment_Detects_Ghost relationship table
-# CREATE TABLE Equipment_Detects_Ghost (
-    equipmentID INT,
-    ghostID INT,
-    PRIMARY KEY (equipmentID, ghostID),
-    FOREIGN KEY (equipmentID) REFERENCES Equipment(equipmentID),
-    FOREIGN KEY (ghostID) REFERENCES Ghost(ghostID)
-);
+This repository includes the following files:
+- **ER Diagram Image**: A visual representation of the Entity-Relationship Diagram that captures the entities and relationships in the database.
+- **Relational Schema Image**: A diagram depicting the relational schema with tables, attributes, primary keys, and foreign key relationships.
+- **SQL Implementation File**: A SQL file containing the full database implementation, including the creation of tables, relationships, and sample data inserts.
 
-# Hunter_Uses_Equipment relationship table
-# CREATE TABLE Hunter_Uses_Equipment (
-    hunterID INT,
-    equipmentID INT,
-    PRIMARY KEY (hunterID, equipmentID),
-    FOREIGN KEY (hunterID) REFERENCES Hunter(hunterID),
-    FOREIGN KEY (equipmentID) REFERENCES Equipment(equipmentID)
-);
+---
 
-# Ghost_FavoriteLocation_Location relationship table
-# CREATE TABLE Ghost_FavoriteLocation_Location (
-    ghostID INT,
-    locationID INT,
-    PRIMARY KEY (ghostID, locationID),
-    FOREIGN KEY (ghostID) REFERENCES Ghost(ghostID),
-    FOREIGN KEY (locationID) REFERENCES Location(locationID)
-);
+## Installation Instructions
 
-# Sample data 
+To run this project:
 
-# Ghost table
-INSERT INTO Ghost VALUES (1, 'Lady in Red', 'Residual Haunt', 9, 2);
-INSERT INTO Ghost VALUES (2, 'The Screamer', 'Poltergeist', 10, 5);
-INSERT INTO Ghost VALUES (3, 'Shadow Man', 'Shadow Person', 8, 4);
-INSERT INTO Ghost VALUES (4, 'The Whisper', 'Intelligent Haunt', 7, 3);
-INSERT INTO Ghost VALUES (5, 'The Jester', 'Demonic', 10, 6);
+1. Clone the repository to your local machine:
+   ```bash
+   git clone https://github.com/your-username/ghost-hunter-database.git
+   ```
+2. Open your PostgreSQL environment or SQL editor (e.g., pgAdmin, DBeaver).
 
-# Hunter table
-INSERT INTO Hunter VALUES (1, 'Alex Marks', 'Expert', 'Poltergeist', 4);
-INSERT INTO Hunter VALUES (2, 'Jamie Lee', 'Intermediate', 'Shadow Person', 3);
-INSERT INTO Hunter VALUES (3, 'Morgan Hale', 'Beginner', 'Residual Haunt', 2);
-INSERT INTO Hunter VALUES (4, 'Pat Jordan', 'Expert', 'Intelligent Haunt', 5);
-INSERT INTO Hunter VALUES (5, 'Taylor Reid', 'Novice', 'Demonic', 3);
+3.Create a new database for this project:
+   ```bash
+    CREATE DATABASE ghost_hunter_db;
+   ```
+4. Run the SQL implementation file to create the tables, relationships, and insert sample data:
+   ```bash
+   \i path/to/sqlfile.sql
+   ```
 
-# Evidence table
-INSERT INTO Evidence VALUES (1, 1, 2, '2024-10-01', '23:15');
-INSERT INTO Evidence VALUES (2, 3, 4, '2024-10-10', '00:30');
-INSERT INTO Evidence VALUES (3, 2, 1, '2024-10-15', '21:45');
-INSERT INTO Evidence VALUES (4, 4, 3, '2024-10-20', '02:10');
-INSERT INTO Evidence VALUES (5, 2, 2, '2024-11-01', '19:00');
-
-# Equipment table
-INSERT INTO Equipment VALUES (1, 'EMF Reader', 'GhostMeter Pro', 'Electromagnetic', TRUE);
-INSERT INTO Equipment VALUES (2, 'Camera', 'NightSight 3000', 'Visual', TRUE);
-INSERT INTO Equipment VALUES (3, 'Thermometer', 'ColdSpot', 'Temperature', FALSE);
-INSERT INTO Equipment VALUES (4, 'Recorder', 'EVP Catcher', 'Audio', TRUE);
-INSERT INTO Equipment VALUES (5, 'Spirit Box', 'Whisperer', 'Audio', TRUE);
-
-# Location table
-INSERT INTO Location VALUES (1, 'Old Mill', 'Boiler Room', 'Abandoned', '1890-01-01');
-INSERT INTO Location VALUES (2, 'Queen Hotel', 'Suite 304', 'Occupied', '1920-01-01');
-INSERT INTO Location VALUES (3, 'Smith Mansion', 'Attic', 'Abandoned', '1915-01-01');
-INSERT INTO Location VALUES (4, 'Lincoln Church', 'Crypt', 'Abandoned', '1850-01-01');
-INSERT INTO Location VALUES (5, 'Downtown Library', 'Basement', 'Occupied', '1940-01-01');
-
-# relationship tables
-INSERT INTO Hunter_Records_Evidence VALUES (1, 1);
-INSERT INTO Hunter_Records_Evidence VALUES (2, 2);
-INSERT INTO Hunter_Records_Evidence VALUES (3, 3);
-INSERT INTO Hunter_Records_Evidence VALUES (4, 4);
-INSERT INTO Hunter_Records_Evidence VALUES (5, 5);
-
-INSERT INTO Equipment_Detects_Ghost VALUES (1, 2);
-INSERT INTO Equipment_Detects_Ghost VALUES (2, 3);
-INSERT INTO Equipment_Detects_Ghost VALUES (3, 4);
-INSERT INTO Equipment_Detects_Ghost VALUES (4, 1);
-INSERT INTO Equipment_Detects_Ghost VALUES (5, 5);
-
-INSERT INTO Hunter_Uses_Equipment VALUES (1, 1);
-INSERT INTO Hunter_Uses_Equipment VALUES (1, 2);
-INSERT INTO Hunter_Uses_Equipment VALUES (2, 3);
-INSERT INTO Hunter_Uses_Equipment VALUES (3, 4);
-INSERT INTO Hunter_Uses_Equipment VALUES (4, 1);
-INSERT INTO Hunter_Uses_Equipment VALUES (5, 5);
-
-INSERT INTO Ghost_FavoriteLocation_Location VALUES (1, 1);
-INSERT INTO Ghost_FavoriteLocation_Location VALUES (2, 2);
-INSERT INTO Ghost_FavoriteLocation_Location VALUES (3, 3);
-INSERT INTO Ghost_FavoriteLocation_Location VALUES (4, 4);
-INSERT INTO Ghost_FavoriteLocation_Location VALUES (5, 5);
-
-# Sample Queries
-## spookiest or quickest ghosts recorded by each hunter.
-SELECT Hunter.name AS hunter_name, Ghost.name AS ghost_name, 
-       Ghost.spookiness_level, Ghost.speed
-FROM Hunter
-JOIN Hunter_Records_Evidence ON Hunter.hunterID = Hunter_Records_Evidence.hunterID
-JOIN Evidence ON Hunter_Records_Evidence.evidenceID = Evidence.evidenceID
-JOIN Equipment_Detects_Ghost ON Evidence.equipmentID = Equipment_Detects_Ghost.equipmentID
-JOIN Ghost ON Equipment_Detects_Ghost.ghostID = Ghost.ghostID
-ORDER BY Ghost.spookiness_level DESC, Ghost.speed DESC;
-
-## List all ghost sightings that used specific equipment.
-SELECT Hunter.name AS hunter_name, Ghost.name AS ghost_name, Equipment.type AS equipment_type, 
-       Evidence.date, Evidence.time
-FROM Hunter
-JOIN Hunter_Records_Evidence ON Hunter.hunterID = Hunter_Records_Evidence.hunterID
-JOIN Evidence ON Hunter_Records_Evidence.evidenceID = Evidence.evidenceID
-JOIN Equipment ON Evidence.equipmentID = Equipment.equipmentID
-JOIN Equipment_Detects_Ghost ON Equipment.equipmentID = Equipment_Detects_Ghost.equipmentID
-JOIN Ghost ON Equipment_Detects_Ghost.ghostID = Ghost.ghostID
-WHERE Equipment.type = 'Camera';
-
-## Find the top-rated hunters based on the spookiness of the ghosts they’ve sighted.
-SELECT Hunter.name AS hunter_name, 
-       AVG(Ghost.spookiness_level) AS avg_spookiness
-FROM Hunter
-JOIN Hunter_Records_Evidence ON Hunter.hunterID = Hunter_Records_Evidence.hunterID
-JOIN Evidence ON Hunter_Records_Evidence.evidenceID = Evidence.evidenceID
-JOIN Equipment_Detects_Ghost ON Evidence.equipmentID = Equipment_Detects_Ghost.equipmentID
-JOIN Ghost ON Equipment_Detects_Ghost.ghostID = Ghost.ghostID
-GROUP BY Hunter.name
-ORDER BY avg_spookiness DESC;
-
-## Find all sightings in abandoned locations.
-SELECT Hunter.name AS hunter_name, Ghost.name AS ghost_name, Location.building, Location.room
-FROM Hunter
-JOIN Hunter_Records_Evidence ON Hunter.hunterID = Hunter_Records_Evidence.hunterID
-JOIN Evidence ON Hunter_Records_Evidence.evidenceID = Evidence.evidenceID
-JOIN Location ON Evidence.locationID = Location.locationID
-JOIN Equipment_Detects_Ghost ON Evidence.equipmentID = Equipment_Detects_Ghost.equipmentID
-JOIN Ghost ON Equipment_Detects_Ghost.ghostID = Ghost.ghostID
-WHERE Location.vacancy = 'Abandoned';
-
-## Retrieve the locations most frequented by specific ghosts.
-SELECT Ghost.name AS ghost_name, Location.building, Location.room
-FROM Ghost
-JOIN Ghost_FavoriteLocation_Location ON Ghost.ghostID = Ghost_FavoriteLocation_Location.ghostID
-JOIN Location ON Ghost_FavoriteLocation_Location.locationID = Location.locationID;
-
-
-
-
+##Future Enhancements
+- Adding more detailed tracking for ghost sightings, including timestamps and investigation reports.
+Integrating additional equipment types for further detection capabilities.
+- Implementing a front-end interface to interact with the database.
+- Implementing advanced queries to track ghost sighting trends over time.
